@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException,status
 from sqlalchemy.orm import Session
-from .. import models, schemas
+from .. import models
+from ..schemas.user import UserCreate, UserResponse
 from ..database import SessionLocal
 from ..utils.hashing import Hash
 
@@ -15,9 +16,10 @@ def get_db():
         db.close()
 
 # ▶ 회원가입 API
-@router.post("/signup", response_model=schemas.UserResponse)
-def create_user(request:schemas.UserCreate, db:Session=Depends(get_db)):
+@router.post("/signup", response_model=UserResponse)
+def create_user(request:UserCreate, db:Session=Depends(get_db)):
     #1. email dupe check
+    existing_user = db.query(models.User).filter(models.User.email == request.email).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already exist")
     
