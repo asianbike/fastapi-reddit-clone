@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from .. import models
+from ..models.user import User
 from ..schemas.user import UserLogin
 from ..database import SessionLocal
 from ..utils.hashing import Hash
@@ -17,7 +17,7 @@ def get_db():
 
 @router.post("/login")
 def login(request: UserLogin, db: Session = Depends(get_db)):  # ✅ 타입 힌트 + Depends
-    user = db.query(models.User).filter(models.User.email == request.email).first()  # ✅ 모델명 정확히
+    user = db.query(User).filter(User.email == request.email).first()  # ✅ 모델명 정확히
     if not user:
         raise HTTPException(status_code=404, detail="Invalid credentials")
 

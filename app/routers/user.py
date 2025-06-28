@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException,status
 from sqlalchemy.orm import Session
-from .. import models
+from ..models.user import User
 from ..schemas.user import UserCreate, UserResponse
 from ..database import SessionLocal
 from ..utils.hashing import Hash
@@ -19,12 +19,12 @@ def get_db():
 @router.post("/signup", response_model=UserResponse)
 def create_user(request:UserCreate, db:Session=Depends(get_db)):
     #1. email dupe check
-    existing_user = db.query(models.User).filter(models.User.email == request.email).first()
+    existing_user = db.query(User).filter(User.email == request.email).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already exist")
     
     #2. hashing pw and save db
-    new_user = models.User(
+    new_user = User(
         email=request.email,
         username=request.username,
         hashed_password=Hash.bcrypt(request.password)

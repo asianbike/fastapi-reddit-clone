@@ -11,5 +11,5 @@ class User(Base):
     username=Column(String, unique=True, nullable=True)
 
     posts=relationship("Post",back_populates="owner")
-    comments=relationship("Comments",back_populates="author")
+    comments=relationship("Comment",back_populates="author")
     

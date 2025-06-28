@@ -1,7 +1,7 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
-from .. import models
+from ..models.user import User
 from ..database import SessionLocal
 from sqlalchemy.orm import Session
 
@@ -32,7 +32,7 @@ def get_current_user(token:str = Depends(oauth2_scheme),db:Session=Depends(get_d
     except JWTError:
         raise credentials_exception
     
-    user = db.query(models.User).filter(models.User.email == email).first()
+    user = db.query(User).filter(User.email == email).first()
     if user is None:
         raise credentials_exception
     
