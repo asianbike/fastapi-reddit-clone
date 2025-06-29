@@ -10,3 +10,10 @@ from .database import Base
 engine = create_engine(DATABASE_URL)
 # 2 DB session for every call
 SessionLocal=sessionmaker(autocommit=False,autoflush=False,bind=engine)
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
