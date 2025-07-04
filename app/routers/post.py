@@ -23,3 +23,16 @@ def create_post(
     db.commit()
     db.refresh(new_post)
     return new_post
+
+
+@router.get("/posts", response_model=list[PostResponse])
+def get_all_posts(db: Session = Depends(get_db)):
+    posts = db.query(Post).all()
+    return posts
+
+@router.get("/posts/{id}", response_model=PostResponse)
+def get_post(id: int = Path(..., title="The ID of the post to retrieve"), db: Session = Depends(get_db)):
+    post = db.query(Post).filter(Post.id == id).first()
+    if not post:
+        raise HTTPException(status_code=404, detail=f"Post with ID {id} not found")
+    return post

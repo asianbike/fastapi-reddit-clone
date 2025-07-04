@@ -14,3 +14,4 @@ class PostResponse(BaseModel):
 
     class config:
         from_attributes = True
+
