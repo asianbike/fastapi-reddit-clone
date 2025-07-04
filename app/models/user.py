@@ -12,4 +12,6 @@ class User(Base):
 
     posts=relationship("Post",back_populates="owner")
     comments=relationship("Comment",back_populates="author")
+    likes = relationship("Like", backref="user")
+
     
