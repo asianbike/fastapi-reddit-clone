@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2>📜 All Posts</h2>
+
+  <!-- Post 작성 폼 -->
+  <form method="post" action="/create-post" class="mb-4">
+    <div class="mb-3">
+      <input type="text" name="title" class="form-control" placeholder="Post title" required>
+    </div>
+    <div class="mb-3">
+      <textarea name="content" class="form-control" rows="3" placeholder="Write something..." required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Post</button>
+  </form>
+
+  {% for post in posts %}
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">{{ post.title }}</h5>
+      <p class="card-text">{{ post.content }}</p>
+      <form method="post" action="/delete-post/{{ post.id }}" class="mb-3">
+        <button class="btn btn-sm btn-danger">Delete</button>
+      </form>
+
+      <!-- 댓글 리스트 -->
+      <h6>💬 Comments</h6>
+      <ul class="list-group mb-3">
+        {% for comment in post.comments %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          {{ comment.content }}
+          <form method="post" action="/delete-comment/{{ comment.id }}">
+            <button class="btn btn-sm btn-outline-danger">Delete</button>
+          </form>
+        </li>
+        {% endfor %}
+      </ul>
+
+      <!-- 댓글 작성 폼 -->
+      <form method="post" action="/create-comment/{{ post.id }}">
+        <div class="mb-2">
+          <input type="text" name="content" class="form-control" placeholder="Write a comment" required>
+        </div>
+        <button class="btn btn-sm btn-secondary">Add Comment</button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

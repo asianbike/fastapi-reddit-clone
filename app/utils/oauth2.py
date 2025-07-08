@@ -18,6 +18,9 @@ def get_db():
         db.close()
 
 def get_current_user(token:str = Depends(oauth2_scheme),db:Session=Depends(get_db)):
+    if token is None:
+        return None
+    
     credentials_exception =HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
