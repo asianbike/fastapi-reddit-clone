@@ -133,10 +133,39 @@ def login_user(
     token = jwt.encode({"sub": userr.email}, SECRET_KEY, algorithm=ALGORITHM)
     res = RedirectResponse(url="/posts", status_code=303)
     res.set_cookie(key="access_token", value=token, httponly=True)
-    return res
+    return RedirectResponse(url="/posts", status_code=303)
 
 @app.get("/logout")
 def logout_user():
     response = RedirectResponse(url="/", status_code=303)
     response.delete_cookie("access_token")
     return response
+
+@app.get("/signup")
+def signup_form(request: Request):
+    return templates.TemplateResponse("signup.html", {"request": request})
+
+@app.post("/signup")
+def signup_user(
+    request: Request,
+    email: str = Form(...),
+    username: str = Form(...),
+    password: str = Form(...),
+    db: Session = Depends(get_db),
+):
+    # routers/user.py와 중복되지 않게 form 기반 처리
+    existing_user = db.query(User).filter(User.email == email).first()
+    if existing_user:
+        return templates.TemplateResponse("signup.html", {
+            "request": request,
+            "error": "email already exists"
+        })
+
+    new_user = User(
+        email=email,
+        username=username,
+        hashed_password=Hash.bcrypt(password)
+    )
+    db.add(new_user)
+    db.commit()
+    return RedirectResponse(url="/login", status_code=HTTP_303_SEE_OTHER)
