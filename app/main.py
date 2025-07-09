@@ -36,6 +36,7 @@ from fastapi import Form
 from fastapi.responses import RedirectResponse
 from starlette.status import HTTP_303_SEE_OTHER
 
+
 @app.get("/posts")
 def show_posts(request: Request, db: Session = Depends(get_db)):
     posts = db.query(post.Post).all()
@@ -43,24 +44,49 @@ def show_posts(request: Request, db: Session = Depends(get_db)):
         p.comments = db.query(comment.Comment).filter(comment.Comment.post_id == p.id).all()
     return templates.TemplateResponse("posts.html", {"request": request, "posts": posts})
 
+# 글 작성
 @app.post("/posts/new")
-def create_post(request: Request, title: str = Form(...), content: str = Form(...), db: Session = Depends(get_db), current_user = Depends(get_current_user)):
-    new_post = post.Post(title=title, content=content, user_id=current_user.id)
+def create_post(
+    request: Request,
+    title: str = Form(...),
+    content: str = Form(...),
+    db: Session = Depends(get_db),
+):
+    new_post = post.Post(title=title, content=content, user_id=1)  # 테스트용 user_id=1 고정
     db.add(new_post)
     db.commit()
     return RedirectResponse(url="/posts", status_code=HTTP_303_SEE_OTHER)
 
+
+# 글 삭제
 @app.post("/posts/{id}/delete")
-def delete_post(id: int, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
+def delete_post(id: int, db: Session = Depends(get_db)):
     post_obj = db.query(post.Post).filter(post.Post.id == id).first()
-    if post_obj and post_obj.user_id == current_user.id:
+    if post_obj:
         db.delete(post_obj)
         db.commit()
     return RedirectResponse(url="/posts", status_code=HTTP_303_SEE_OTHER)
 
+
+# 댓글 작성
 @app.post("/comments/new")
-def create_comment(request: Request, post_id: int = Form(...), content: str = Form(...), db: Session = Depends(get_db), current_user = Depends(get_current_user)):
-    new_comment = comment.Comment(content=content, post_id=post_id, user_id=current_user.id)
+def create_comment(
+    request: Request,
+    post_id: int = Form(...),
+    content: str = Form(...),
+    db: Session = Depends(get_db),
+):
+    new_comment = comment.Comment(content=content, post_id=post_id, user_id=1)  # 테스트용 user_id=1
     db.add(new_comment)
     db.commit()
+    return RedirectResponse(url="/posts", status_code=HTTP_303_SEE_OTHER)
+
+
+# 댓글 삭제
+@app.post("/comments/{id}/delete")
+def delete_comment(id: int, db: Session = Depends(get_db)):
+    comment_obj = db.query(comment.Comment).filter(comment.Comment.id == id).first()
+    if comment_obj:
+        db.delete(comment_obj)
+        db.commit()
     return RedirectResponse(url="/posts", status_code=HTTP_303_SEE_OTHER)
