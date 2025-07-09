@@ -8,6 +8,13 @@
   <nav class="navbar navbar-dark bg-dark mb-4">
     <div class="container">
       <a class="navbar-brand" href="/">Mini Reddit</a>
+      <div>
+        {% if request.cookies.get("access_token") %}
+          <a href="/logout" class="btn btn-outline-light btn-sm">Logout</a>
+        {% else %}
+          <a href="/login" class="btn btn-outline-light btn-sm">Login</a>
+        {% endif %}
+      </div>
     </div>
   </nav>
 

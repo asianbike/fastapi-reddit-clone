@@ -1,7 +1,7 @@
 from fastapi import FastAPI,Request,Depends,HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
 from sqlalchemy.orm import Session
 from .database import Base, engine,get_db
 from .models import user, post, comment
@@ -9,6 +9,10 @@ from .models.user import Base
 from .utils.oauth2 import get_current_user
 from .routers import user as routers_user, auth,comment as comment_router, protected, post as post_router, like as like_router
 import os
+from fastapi import Form, Response, Cookie
+from jose import jwt
+from .utils.hashing import Hash
+import datetime
 
 user.Base.metadata.create_all(bind=engine)
 app = FastAPI()
@@ -103,3 +107,32 @@ def view_post_detail(post_id: int, request: Request, db: Session = Depends(get_d
         "request": request,
         "post": post_obj
     })
+
+SECRET_KEY = "your_secret"
+ALGORITHM = "HS256"
+
+@app.get("/login")
+def login_page(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
+
+@app.post("/login")
+def login_user(
+    response: Response,
+    email: str = Form(...),
+    password: str = Form(...),
+    db: Session = Depends(get_db),
+):
+    userr = db.query(user).filter(user.email == email).first()
+    if not userr or not Hash.verify(password, userr.hashed_password):
+        return templates.TemplateResponse("login.html", {"request": {}, "error": "Invalid credentials"})
+
+    token = jwt.encode({"sub": userr.email}, SECRET_KEY, algorithm=ALGORITHM)
+    res = RedirectResponse(url="/posts", status_code=303)
+    res.set_cookie(key="access_token", value=token, httponly=True)
+    return res
+
+@app.get("/logout")
+def logout_user():
+    response = RedirectResponse(url="/", status_code=303)
+    response.delete_cookie("access_token")
+    return response
