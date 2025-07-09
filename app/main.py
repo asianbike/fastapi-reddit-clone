@@ -5,7 +5,7 @@ from fastapi.responses import FileResponse, RedirectResponse
 from sqlalchemy.orm import Session
 from .database import Base, engine,get_db
 from .models import user, post, comment
-from .models.user import Base 
+from .models.user import Base,User
 from .utils.oauth2 import get_current_user
 from .routers import user as routers_user, auth,comment as comment_router, protected, post as post_router, like as like_router
 import os
@@ -117,14 +117,18 @@ def login_page(request: Request):
 
 @app.post("/login")
 def login_user(
+    request:Request,
     response: Response,
     email: str = Form(...),
     password: str = Form(...),
     db: Session = Depends(get_db),
 ):
-    userr = db.query(user).filter(user.email == email).first()
+    userr = db.query(User).filter(User.email == email).first()
     if not userr or not Hash.verify(password, userr.hashed_password):
-        return templates.TemplateResponse("login.html", {"request": {}, "error": "Invalid credentials"})
+        return templates.TemplateResponse("login.html", {
+            "request": request,
+            "error": "Invalid credentials"
+        })
 
     token = jwt.encode({"sub": userr.email}, SECRET_KEY, algorithm=ALGORITHM)
     res = RedirectResponse(url="/posts", status_code=303)

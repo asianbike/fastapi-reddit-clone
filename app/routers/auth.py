@@ -15,7 +15,7 @@ def get_db():
     finally:
         db.close()
 
-@router.post("/login")
+@router.post("/api/login")
 def login(request: UserLogin, db: Session = Depends(get_db)):  # ✅ 타입 힌트 + Depends
     user = db.query(User).filter(User.email == request.email).first()  # ✅ 모델명 정확히
     if not user:
