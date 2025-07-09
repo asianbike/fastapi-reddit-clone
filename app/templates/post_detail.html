@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2>{{ post.title }}</h2>
+  <p>{{ post.content }}</p>
+
+  <!-- 글 삭제 버튼 -->
+  <form method="post" action="/posts/{{ post.id }}/delete" class="mb-4">
+    <button type="submit" class="btn btn-danger btn-sm">🗑 Delete</button>
+  </form>
+
+  <hr>
+  <h4>💬 Comments</h4>
+  {% for comment in post.comments %}
+    <div class="mb-2">
+      <p>{{ comment.content }}</p>
+      <form method="post" action="/comments/{{ comment.id }}/delete" style="display:inline;">
+        <button type="submit" class="btn btn-outline-danger btn-sm">삭제</button>
+      </form>
+    </div>
+  {% endfor %}
+
+  <form method="post" action="/comments/new" class="mt-2">
+    <input type="hidden" name="post_id" value="{{ post.id }}">
+    <input type="text" name="content" placeholder="Add a comment..." class="form-control mb-2" required>
+    <button type="submit" class="btn btn-outline-primary btn-sm">💬 Comment</button>
+  </form>
+</div>
+{% endblock %}

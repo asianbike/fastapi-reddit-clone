@@ -1,4 +1,4 @@
-from fastapi import FastAPI,Request,Depends
+from fastapi import FastAPI,Request,Depends,HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -15,12 +15,12 @@ app = FastAPI()
 app.include_router(routers_user.router)
 app.include_router(auth.router)
 app.include_router(protected.router)
-app.include_router(post_router.router)
 app.include_router(comment_router.router)
 app.include_router(like_router.router)
+app.include_router(post_router.router)
+
 app.mount("/static",StaticFiles(directory="static"),name="static")
 templates=Jinja2Templates(directory="templates")
-
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
@@ -90,3 +90,16 @@ def delete_comment(id: int, db: Session = Depends(get_db)):
         db.delete(comment_obj)
         db.commit()
     return RedirectResponse(url="/posts", status_code=HTTP_303_SEE_OTHER)
+
+@app.get("/view/posts/{post_id}")
+def view_post_detail(post_id: int, request: Request, db: Session = Depends(get_db)):
+    post_obj = db.query(post.Post).filter(post.Post.id == post_id).first()
+    if not post_obj:
+        raise HTTPException(status_code=404, detail="Post not found")
+    
+    post_obj.comments = db.query(comment.Comment).filter(comment.Comment.post_id == post_id).all()
+
+    return templates.TemplateResponse("post_detail.html", {
+        "request": request,
+        "post": post_obj
+    })

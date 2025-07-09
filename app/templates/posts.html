@@ -1,5 +1,4 @@
 {% extends "layout.html" %}
-
 {% block content %}
 <div class="container mt-5">
   <h2>🔥 All Posts</h2>
@@ -14,38 +13,17 @@
   <hr>
 
   {% for post in posts %}
-  <div class="card mb-4">
-    <div class="card-body">
-      <h5 class="card-title">{{ post.title }}</h5>
-      <p class="card-text">{{ post.content }}</p>
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5><a href="/view/posts/{{ post.id }}">{{ post.title }}</a></h5>
+        <p class="text-muted">작성자 ID: {{ post.user_id }}</p>
 
-      <!-- 글 삭제 -->
-      <form method="post" action="/posts/{{ post.id }}/delete" style="display:inline;">
-        <button type="submit" class="btn btn-danger btn-sm">🗑 Delete</button>
-      </form>
+        <!-- 삭제 버튼 -->
+        <form method="post" action="/posts/{{ post.id }}/delete" style="display:inline;">
+          <button type="submit" class="btn btn-danger btn-sm">🗑 Delete</button>
+        </form>
+      </div>
     </div>
-
-    <div class="card-footer">
-      <h6>💬 Comments</h6>
-
-      {% for comment in post.comments %}
-        <div class="mb-2">
-          <span>{{ comment.content }}</span>
-          <!-- 댓글 삭제 -->
-          <form method="post" action="/comments/{{ comment.id }}/delete" style="display:inline;">
-            <button type="submit" class="btn btn-outline-danger btn-sm">삭제</button>
-          </form>
-        </div>
-      {% endfor %}
-
-      <!-- 댓글 작성 -->
-      <form method="post" action="/comments/new" class="mt-2">
-        <input type="hidden" name="post_id" value="{{ post.id }}">
-        <input type="text" name="content" placeholder="Add a comment..." class="form-control mb-2" required>
-        <button type="submit" class="btn btn-outline-primary btn-sm">💬 Comment</button>
-      </form>
-    </div>
-  </div>
   {% endfor %}
 </div>
 {% endblock %}
