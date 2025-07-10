@@ -2,11 +2,10 @@ services:
   - type: web
     name: fastapi-reddit-clone
     env: python
-    plan: free
     buildCommand: "pip install -r requirements.txt"
     startCommand: "uvicorn app.main:app --host 0.0.0.0 --port 10000"
     envVars:
       - key: DATABASE_URL
-        value: postgresql://redditclone_db_lnkp_user:c0XrluoOGcp0VPoMUz36Hz7AmPpWNQLB@dpg-d1nfcdripnbc73ajiqgg-a/redditclone_db_lnkp
+        value: postgresql://asianbike:J0cg0crxnygPNIarMroAMV0z1xGJRj6j@dpg-d1o0ike3jp1c73da6usg-a/redditdb_j0th
       - key: SECRET_KEY
         value: your_own_secret_key
