@@ -1,6 +1,5 @@
 from fastapi import FastAPI,Request,Depends,HTTPException
 from fastapi.templating import Jinja2Templates
-from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, RedirectResponse
 from sqlalchemy.orm import Session
 from .database import Base, engine,get_db
@@ -54,7 +53,7 @@ def create_post(
     content: str = Form(...),
     db: Session = Depends(get_db),
 ):
-    new_post = post.Post(title=title, content=content, user_id=1)  # 테스트용 user_id=1 고정
+    new_post = post.Post(title=title, content=content)  # 테스트용 user_id=1 고정
     db.add(new_post)
     db.commit()
     return RedirectResponse(url="/posts", status_code=HTTP_303_SEE_OTHER)
