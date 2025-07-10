@@ -17,7 +17,6 @@ def create_post(
     new_post=Post(
         title=request.title,
         content=request.content,
-        user_id=current_user.id
     )
     db.add(new_post)
     db.commit()

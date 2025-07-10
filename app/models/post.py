@@ -8,6 +8,3 @@ class Post(Base):
     id=Column(Integer, primary_key=True,index=True)
     title = Column(String, nullable=True)
     content=Column(Text, nullable=True)
-    user_id=Column(Integer, ForeignKey("users.id"),nullable=True)
-
-    

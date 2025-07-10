@@ -10,8 +10,6 @@ class User(Base):
     hashed_password= Column(String, nullable=True)
     username=Column(String, unique=True, nullable=True)
 
-    posts=relationship("Post",back_populates="owner")
-    comments=relationship("Comment",back_populates="author")
-    likes = relationship("Like", backref="user")
+    
 
     

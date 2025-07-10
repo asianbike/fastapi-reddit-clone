@@ -15,7 +15,6 @@ def create_comment(
 ):
     new_comment=Comment(
         content=request.content,
-        user_id=current_user.id,
         post_id=request.post_id
     )
     db.add(new_comment)
