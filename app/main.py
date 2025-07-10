@@ -23,7 +23,6 @@ app.include_router(comment_router.router)
 app.include_router(like_router.router)
 app.include_router(post_router.router)
 
-app.mount("/static",StaticFiles(directory="static"),name="static")
 templates=Jinja2Templates(directory="templates")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
