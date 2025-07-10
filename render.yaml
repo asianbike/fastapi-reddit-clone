@@ -1,0 +1,17 @@
+# render.yaml
+services:
+  - type: web
+    name: fastapi-reddit
+    env: python
+    buildCommand: "./venv/bin/pip install -r requirements.txt"
+    startCommand: "uvicorn app.main:app --host 0.0.0.0 --port 10000"
+    envVars:
+      - key: DATABASE_URL
+        value: YOUR_DATABASE_URL  # 여기에 Render의 PostgreSQL 주소를 정확히 넣어
+      - key: SECRET_KEY
+        value: your_secret_key
+    autoDeploy: true
+
+build:
+  environment:
+    python_version: 3.10
