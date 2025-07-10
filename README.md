@@ -69,6 +69,3 @@ Use this to test /login, get token, and use /me, /posts.
 This project is part of my preparation for backend SWE internships at Big Tech companies in North America.
 Built from scratch with guidance to deeply understand how real authentication, ORM, REST API, and token-based systems work.
 📌 Author
-
-Built by Son Yeongho
-Feel free to contact or follow progress on GitHub!
