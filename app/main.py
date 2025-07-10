@@ -105,7 +105,7 @@ def view_post_detail(post_id: int, request: Request, db: Session = Depends(get_d
         "post": post_obj
     })
 
-SECRET_KEY = "your_secret"
+SECRET_KEY = "your_own_secret_key"
 ALGORITHM = "HS256"
 
 @app.get("/login")

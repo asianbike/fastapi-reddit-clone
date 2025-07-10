@@ -10,6 +10,4 @@ class Post(Base):
     content=Column(Text, nullable=True)
     user_id=Column(Integer, ForeignKey("users.id"),nullable=True)
 
-    owner = relationship("User", back_populates="posts")
-    comments = relationship("Comment", back_populates="post")
-    likes = relationship("Like", backref="posts",cascade="all, delete")
+    
