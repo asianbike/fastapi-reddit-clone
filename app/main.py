@@ -53,7 +53,7 @@ def create_post(
     content: str = Form(...),
     db: Session = Depends(get_db),
 ):
-    new_post = post.Post(title=title, content=content)  # 테스트용 user_id=1 고정
+    new_post = post.Post(title=title, content=content)  
     db.add(new_post)
     db.commit()
     return RedirectResponse(url="/posts", status_code=HTTP_303_SEE_OTHER)
@@ -77,7 +77,7 @@ def create_comment(
     content: str = Form(...),
     db: Session = Depends(get_db),
 ):
-    new_comment = comment.Comment(content=content, post_id=post_id, user_id=1)  # 테스트용 user_id=1
+    new_comment = comment.Comment(content=content, post_id=post_id)
     db.add(new_comment)
     db.commit()
     return RedirectResponse(url="/posts", status_code=HTTP_303_SEE_OTHER)
